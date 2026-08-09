@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src",
+    "\\src\\features",
+    "\\src\\features\\import",
+    "\\src\\lib\\db\\migrations",
+    "\\src\\lib\\storage"
   ],
-  "SelectedNode": "\\docker-compose.yml",
+  "SelectedNode": "\\src\\features\\import\\types.ts",
   "PreviewInSolutionExplorer": false
 }
