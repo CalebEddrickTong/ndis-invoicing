@@ -84,6 +84,7 @@ export interface RateSetSupportItemPriceTable {
     end_date: NullableTimestamp;
     created_at: Generated<Date>;
     updated_at: Generated<Date>;
+    deleted_at: NullableTimestamp;
 }
 
 export interface RateSetSupportItemAttributeTypeTable {

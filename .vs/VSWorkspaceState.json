@@ -2,11 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\features",
-    "\\src\\features\\import",
-    "\\src\\lib\\db\\migrations",
-    "\\src\\lib\\storage"
+    "\\src\\app",
+    "\\src\\app\\api",
+    "\\src\\app\\api\\invoices"
   ],
-  "SelectedNode": "\\src\\features\\import\\types.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -1,5 +1,12 @@
 import { db } from "../../../lib/db/database";
 
+type RateSetInput = {
+    name?: unknown;
+    description?: unknown;
+    start_date?: unknown;
+    end_date?: unknown;
+};
+
 export async function GET() {
     const rateSets = await db
         .selectFrom("rate_set")
@@ -21,13 +28,6 @@ export async function GET() {
         data: rateSets,
     });
 }
-
-type RateSetInput = {
-    name?: unknown;
-    description?: unknown;
-    start_date?: unknown;
-    end_date?: unknown;
-};
 
 export async function POST(request: Request) {
     try {

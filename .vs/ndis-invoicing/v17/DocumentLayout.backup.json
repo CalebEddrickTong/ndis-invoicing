@@ -3,48 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\types.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\features\\import\\types.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\import-service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\features\\import\\import-service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-transformer.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\features\\import\\excel-transformer.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-validator.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\features\\import\\excel-validator.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-parser.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\features\\import\\excel-parser.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\ai\\openai.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\ai\\openai.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\storage\\minio.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\lib\\storage\\minio.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\api\\invoices\\route.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\api\\invoices\\route.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\layout.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\layout.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\migrate.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\lib\\db\\migrate.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\database.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\lib\\db\\database.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\schema.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\lib\\db\\schema.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -57,155 +25,53 @@
           "SelectedChildIndex": 2,
           "Children": [
             {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "schema.ts",
+              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\schema.ts",
+              "RelativeDocumentMoniker": "src\\lib\\db\\schema.ts",
+              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\schema.ts",
+              "RelativeToolTip": "src\\lib\\db\\schema.ts",
+              "ViewState": "AgIAADMAAAAAAAAAAAAMwFYAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-08-09T07:02:23.682Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "layout.tsx",
+              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\layout.tsx",
+              "RelativeDocumentMoniker": "src\\app\\layout.tsx",
+              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\layout.tsx",
+              "RelativeToolTip": "src\\app\\layout.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-08-08T16:41:44.404Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "route.ts",
+              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\api\\invoices\\route.ts",
+              "RelativeDocumentMoniker": "src\\app\\api\\invoices\\route.ts",
+              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\api\\invoices\\route.ts",
+              "RelativeToolTip": "src\\app\\api\\invoices\\route.ts",
+              "ViewState": "AgIAAFkBAAAAAAAAAAAkwHsBAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-08-09T15:04:17.785Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "types.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\types.ts",
-              "RelativeDocumentMoniker": "src\\features\\import\\types.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\types.ts",
-              "RelativeToolTip": "src\\features\\import\\types.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:46:51.927Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "import-service.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\import-service.ts",
-              "RelativeDocumentMoniker": "src\\features\\import\\import-service.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\import-service.ts",
-              "RelativeToolTip": "src\\features\\import\\import-service.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:46:42.302Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "excel-transformer.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-transformer.ts",
-              "RelativeDocumentMoniker": "src\\features\\import\\excel-transformer.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-transformer.ts",
-              "RelativeToolTip": "src\\features\\import\\excel-transformer.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:46:28.676Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "excel-validator.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-validator.ts",
-              "RelativeDocumentMoniker": "src\\features\\import\\excel-validator.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-validator.ts",
-              "RelativeToolTip": "src\\features\\import\\excel-validator.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:46:10.748Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "excel-parser.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-parser.ts",
-              "RelativeDocumentMoniker": "src\\features\\import\\excel-parser.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\features\\import\\excel-parser.ts",
-              "RelativeToolTip": "src\\features\\import\\excel-parser.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:45:53.46Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "openai.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\ai\\openai.ts",
-              "RelativeDocumentMoniker": "src\\ai\\openai.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\ai\\openai.ts",
-              "RelativeToolTip": "src\\ai\\openai.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:44:43.829Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "minio.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\storage\\minio.ts",
-              "RelativeDocumentMoniker": "src\\lib\\storage\\minio.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\storage\\minio.ts",
-              "RelativeToolTip": "src\\lib\\storage\\minio.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:43:44.942Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "layout.tsx",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\layout.tsx",
-              "RelativeDocumentMoniker": "src\\app\\layout.tsx",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\app\\layout.tsx",
-              "RelativeToolTip": "src\\app\\layout.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:41:44.404Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "migrate.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\migrate.ts",
-              "RelativeDocumentMoniker": "src\\lib\\db\\migrate.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\migrate.ts",
-              "RelativeToolTip": "src\\lib\\db\\migrate.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:38:59.44Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "database.ts",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\database.ts",
-              "RelativeDocumentMoniker": "src\\lib\\db\\database.ts",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\src\\lib\\db\\database.ts",
-              "RelativeToolTip": "src\\lib\\db\\database.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-08-08T16:35:33.585Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "docker-compose.yml",
-              "DocumentMoniker": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\docker-compose.yml",
-              "RelativeDocumentMoniker": "docker-compose.yml",
-              "ToolTip": "C:\\Users\\caleb\\source\\repos\\Projects\\ndis-invoicing\\docker-compose.yml",
-              "RelativeToolTip": "docker-compose.yml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
-              "WhenOpened": "2026-08-08T16:22:11.069Z",
-              "EditorCaption": ""
             }
           ]
         }
