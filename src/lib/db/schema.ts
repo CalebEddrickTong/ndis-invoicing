@@ -18,6 +18,12 @@ type TriggerGenerated<T> = ColumnType<
     never
 >;
 
+type Decimal = ColumnType<
+    string | null,
+    string | number | null | undefined,
+    string | number | null
+>;
+
 export interface GenderTable {
     id: Generated<number>;
     code: string;
@@ -149,12 +155,6 @@ export interface ProviderTable {
     deactivated_at: NullableTimestamp;
     deleted_at: NullableTimestamp;
 }
-
-type Decimal = ColumnType<
-    string | null,
-    string | number | null | undefined,
-    string | number | null
->;
 
 export interface InvoiceTable {
     id: Generated<number>;

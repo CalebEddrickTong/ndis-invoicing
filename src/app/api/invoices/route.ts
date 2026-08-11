@@ -21,6 +21,19 @@ type InvoiceItemInput = {
     input_rate?: unknown;
 };
 
+type PreparedInvoiceItem = {
+    rateSetId: number | null;
+    categoryId: number | null;
+    supportItemId: number | null;
+    startDate: string | null;
+    endDate: string | null;
+    maxRate: BigNumber | null;
+    unit: BigNumber | null;
+    inputRate: BigNumber | null;
+    amount: BigNumber | null;
+    sortOrder: number;
+};
+
 function parseDecimal(value: unknown): BigNumber | null {
     if (
         typeof value !== "number" &&
@@ -38,6 +51,28 @@ function parseDecimal(value: unknown): BigNumber | null {
     const number = new BigNumber(text);
 
     return number.isFinite() ? number : null;
+}
+
+function calculateItemAmount(
+    unit: BigNumber,
+    inputRate: BigNumber
+): BigNumber {
+    return unit
+        .multipliedBy(inputRate)
+        .decimalPlaces(2, BigNumber.ROUND_HALF_UP);
+}
+
+function decimalForDatabase(
+    value: BigNumber | null,
+    decimalPlaces?: number
+): string | null {
+    if (!value) {
+        return null;
+    }
+
+    return decimalPlaces === undefined
+        ? value.toString()
+        : value.toFixed(decimalPlaces);
 }
 
 function parsePositiveInteger(value: unknown): number | null {
@@ -325,13 +360,16 @@ export async function POST(request: Request) {
         errors.invoice_number = "Invoice number is required.";
     }
 
-    if (!invoiceDate || Number.isNaN(Date.parse(invoiceDate))) {
+    if (!invoiceDate || !parseDateOnly(invoiceDate)) {
         errors.invoice_date = "Valid invoice date is required.";
     }
 
     if (!expectedAmount) {
         errors.expected_amount = "Expected amount is required.";
     }
+
+    let calculatedInvoiceAmount = new BigNumber(0);
+    const preparedItems: PreparedInvoiceItem[] = [];
 
     if (status === "completed") {
         // Client required check
@@ -370,7 +408,7 @@ export async function POST(request: Request) {
             }
         }
 
-        // fetch the participant’s pricing region once per completed invoice
+        // fetch the participantâ€™s pricing region once per completed invoice
         const clientPricingRegion =
             clientId && Number.isInteger(clientId)
                 ? await getClientPricingRegion(clientId)
@@ -415,6 +453,7 @@ export async function POST(request: Request) {
             // category/support-item validation
             const categoryId = parsePositiveInteger(item.category_id);
             const supportItemId = parsePositiveInteger(item.support_item_id);
+            let derivedMaxRate: BigNumber | null = null;
 
             if (
                 rateSetId &&
@@ -441,7 +480,7 @@ export async function POST(request: Request) {
                 endDate &&
                 clientPricingRegion
             ) {
-                const maxRate = await findMaxRate(
+                derivedMaxRate = await findMaxRate(
                     rateSetId,
                     supportItemId,
                     clientPricingRegion,
@@ -449,12 +488,89 @@ export async function POST(request: Request) {
                     endDate
                 );
 
-                if (!maxRate) {
+                if (!derivedMaxRate) {
                     errors[`items.${index}.max_rate`] =
                         "No matching NDIS price was found for this invoice item.";
                 }
             }
 
+            // existing item amount calculations
+            const unit = parseDecimal(item.unit);
+            const inputRate = parseDecimal(item.input_rate);
+
+            if (unit && inputRate) {
+                const itemAmount = calculateItemAmount(
+                    unit,
+                    inputRate
+                );
+
+                calculatedInvoiceAmount =
+                    calculatedInvoiceAmount.plus(itemAmount);
+            }
+
+            const itemAmount =
+                unit && inputRate
+                    ? calculateItemAmount(unit, inputRate)
+                    : null;
+
+            preparedItems.push({
+                rateSetId,
+                categoryId,
+                supportItemId,
+                startDate,
+                endDate,
+                maxRate: derivedMaxRate,
+                unit,
+                inputRate,
+                amount: itemAmount,
+                sortOrder: index,
+            });
+        }
+
+        if (
+            expectedAmount &&
+            !expectedAmount.eq(calculatedInvoiceAmount)
+        ) {
+            errors.expected_amount =
+                `Expected amount must equal calculated invoice amount ${calculatedInvoiceAmount.toFixed(2)}.`;
+        }
+
+    }
+
+    if (status === "drafted") {
+        for (let index = 0; index < items.length; index += 1) {
+            const item = items[index];
+
+            const rateSetId = parsePositiveInteger(item.rate_set_id);
+            const categoryId = parsePositiveInteger(item.category_id);
+            const supportItemId = parsePositiveInteger(item.support_item_id);
+            const startDate = parseDateOnly(item.start_date);
+            const endDate = parseDateOnly(item.end_date);
+            const unit = parseDecimal(item.unit);
+            const inputRate = parseDecimal(item.input_rate);
+
+            const itemAmount =
+                unit && inputRate
+                    ? calculateItemAmount(unit, inputRate)
+                    : null;
+
+            if (itemAmount) {
+                calculatedInvoiceAmount =
+                    calculatedInvoiceAmount.plus(itemAmount);
+            }
+
+            preparedItems.push({
+                rateSetId,
+                categoryId,
+                supportItemId,
+                startDate,
+                endDate,
+                maxRate: null,
+                unit,
+                inputRate,
+                amount: itemAmount,
+                sortOrder: index,
+            });
         }
     }
 
@@ -480,9 +596,128 @@ export async function POST(request: Request) {
         );
     }
 
-    return Response.json({
-        success: true,
-        status,
-    });
+    // try success response
+    try {
+        const invoice = await db.transaction().execute(async (trx) => {
+            const createdInvoice = await trx
+                .insertInto("invoice")
+                .values({
+                    client_id:
+                        Number.isInteger(clientId) && clientId! > 0
+                            ? clientId
+                            : null,
+                    provider_id:
+                        Number.isInteger(providerId) && providerId! > 0
+                            ? providerId
+                            : null,
+                    invoice_number: invoiceNumber,
+                    invoice_date: invoiceDate,
+                    amount:
+                        preparedItems.some((item) => item.amount !== null)
+                            ? decimalForDatabase(calculatedInvoiceAmount, 2)
+                            : null,
+                    expected_amount:
+                        decimalForDatabase(expectedAmount, 2),
+                    status,
+                })
+                .returning([
+                    "id",
+                    "client_id",
+                    "provider_id",
+                    "invoice_number",
+                    "invoice_date",
+                    "amount",
+                    "expected_amount",
+                    "status",
+                    "created_at",
+                ])
+                .executeTakeFirstOrThrow();
+
+            const createdItems =
+                preparedItems.length > 0
+                    ? await trx
+                        .insertInto("invoice_item")
+                        .values(
+                            preparedItems.map((item) => ({
+                                invoice_id: createdInvoice.id,
+                                rate_set_id: item.rateSetId,
+                                category_id: item.categoryId,
+                                support_item_id: item.supportItemId,
+                                start_date: item.startDate
+                                    ? startOfDayUtc(item.startDate)
+                                    : null,
+                                end_date: item.endDate
+                                    ? endOfDayUtc(item.endDate)
+                                    : null,
+                                max_rate: decimalForDatabase(
+                                    item.maxRate,
+                                    2
+                                ),
+                                unit: decimalForDatabase(item.unit),
+                                input_rate: decimalForDatabase(
+                                    item.inputRate,
+                                    2
+                                ),
+                                amount: decimalForDatabase(
+                                    item.amount,
+                                    2
+                                ),
+                                sort_order: item.sortOrder,
+                            }))
+                        )
+                        .returning([
+                            "id",
+                            "rate_set_id",
+                            "category_id",
+                            "support_item_id",
+                            "start_date",
+                            "end_date",
+                            "max_rate",
+                            "unit",
+                            "input_rate",
+                            "amount",
+                            "sort_order",
+                        ])
+                        .execute()
+                    : [];
+
+            return {
+                ...createdInvoice,
+                items: createdItems,
+            };
+        });
+
+        return Response.json(
+            {
+                success: true,
+                data: invoice,
+            },
+            { status: 201 }
+        );
+    } catch (error) {
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === "23505"
+        ) {
+            return Response.json(
+                {
+                    message:
+                        "Invoice number already exists for this provider.",
+                },
+                { status: 409 }
+            );
+        }
+
+        console.error("Create invoice failed:", error);
+
+        return Response.json(
+            {
+                message: "Unable to create invoice.",
+            },
+            { status: 500 }
+        );
+    }
 }
 
