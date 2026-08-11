@@ -4,7 +4,9 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\api",
-    "\\src\\app\\api\\invoices"
+    "\\src\\app\\api\\invoices\\lookups",
+    "\\src\\app\\api\\participants\\lookups"
   ],
+  "SelectedNode": "\\src\\app\\invoices",
   "PreviewInSolutionExplorer": false
 }
