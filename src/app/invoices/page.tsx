@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import {
+    Alert,
     Button,
     Card,
     DatePicker,
+    Descriptions,
     Form,
     Input,
     InputNumber,
@@ -31,6 +33,25 @@ type Invoice = {
     status: "drafted" | "completed";
     created_at: string;
     updated_at: string;
+};
+
+type InvoiceDetailItem = {
+    id: number;
+    invoice_id: number;
+    rate_set_id: number | null;
+    category_id: number | null;
+    support_item_id: number | null;
+    start_date: string | null;
+    end_date: string | null;
+    max_rate: string | null;
+    unit: string | null;
+    input_rate: string | null;
+    amount: string | null;
+    sort_order: number;
+};
+
+type InvoiceDetail = Invoice & {
+    items: InvoiceDetailItem[];
 };
 
 type Participant = {
@@ -92,6 +113,14 @@ type SupportItemLookup = {
 export default function InvoicesPage() {
     const [form] = Form.useForm<InvoiceFormValues>();
 
+    const [formError, setFormError] = useState<string | null>(null);
+
+    const [invoiceItemsError, setInvoiceItemsError] =
+        useState<string | null>(null);
+
+    const [invoiceItemDerivedErrors, setInvoiceItemDerivedErrors] =
+        useState<Record<number, string>>({});
+
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -108,6 +137,11 @@ export default function InvoicesPage() {
 
     const [editingInvoice, setEditingInvoice] =
         useState<Invoice | null>(null);
+
+    const [viewingInvoice, setViewingInvoice] =
+        useState<InvoiceDetail | null>(null);
+
+    const [viewModalOpen, setViewModalOpen] = useState(false);
 
     async function loadInvoices() {
         setLoading(true);
@@ -166,6 +200,48 @@ export default function InvoicesPage() {
     }, []);
 
     async function handleSaveInvoice(values: InvoiceFormValues) {
+        setFormError(null);
+        setInvoiceItemsError(null);
+        setInvoiceItemDerivedErrors({});
+
+        for (const field of form.getFieldsError()) {
+            const { name } = field;
+
+            if (
+                name.length === 3 &&
+                name[0] === "items" &&
+                typeof name[1] === "number"
+            ) {
+                form.setFields([
+                    {
+                        name: [
+                            "items",
+                            name[1],
+                            name[2] as keyof InvoiceItemFormValues,
+                        ] as [
+                                "items",
+                                number,
+                                keyof InvoiceItemFormValues,
+                            ],
+                        errors: [],
+                    },
+                ]);
+
+                continue;
+            }
+
+            if (name.length === 1) {
+                form.setFields([
+                    {
+                        name: [
+                            name[0] as keyof InvoiceFormValues,
+                        ] as [keyof InvoiceFormValues],
+                        errors: [],
+                    },
+                ]);
+            }
+        }
+
         setSaving(true);
 
         try {
@@ -205,14 +281,64 @@ export default function InvoicesPage() {
             const result = await response.json();
 
             if (!response.ok) {
+                if (result.errors?.items) {
+                    setInvoiceItemsError(String(result.errors.items));
+                }
+
                 if (result.errors) {
+                    const derivedErrors: Record<number, string> = {};
+
+                    Object.entries(result.errors ?? {}).forEach(([name, error]) => {
+                        const match = name.match(/^items\.(\d+)\.max_rate$/);
+
+                        if (match) {
+                            derivedErrors[Number(match[1])] = String(error);
+                        }
+                    });
+
+                    setInvoiceItemDerivedErrors(derivedErrors);
+
                     form.setFields(
-                        Object.entries(result.errors).map(([name, error]) => ({
-                            name: name as keyof InvoiceFormValues,
-                            errors: [String(error)],
-                        }))
+                        Object.entries(result.errors)
+                            .filter(
+                                ([name]) =>
+                                    name !== "items" &&
+                                    !/^items\.\d+\.max_rate$/.test(name)
+                            )
+                            .map(([name, error]) => {
+                                if (name.startsWith("items.")) {
+                                    const [, indexText, fieldName] = name.split(".");
+
+                                    return {
+                                        name: [
+                                            "items",
+                                            Number(indexText),
+                                            fieldName as keyof InvoiceItemFormValues,
+                                        ] as [
+                                                "items",
+                                                number,
+                                                keyof InvoiceItemFormValues,
+                                            ],
+                                        errors: [String(error)],
+                                    };
+                                }
+
+                                return {
+                                    name: [name as keyof InvoiceFormValues] as [
+                                        keyof InvoiceFormValues,
+                                    ],
+                                    errors: [String(error)],
+                                };
+                            })
                     );
                 }
+
+                setFormError(
+                    result.message === "Validation failed."
+                        ? "Please correct the highlighted fields below."
+                        : result.message ??
+                        "Unable to save the invoice. Please check the entered information."
+                );
 
                 return;
             }
@@ -224,6 +350,18 @@ export default function InvoicesPage() {
         } finally {
             setSaving(false);
         }
+    }
+
+    async function handleViewInvoice(id: number) {
+        const response = await fetch(`/api/invoices/${id}`);
+        const result = await response.json();
+
+        if (!response.ok) {
+            return;
+        }
+
+        setViewingInvoice(result.data);
+        setViewModalOpen(true);
     }
 
     async function handleDeleteInvoice(id: number) {
@@ -248,6 +386,9 @@ export default function InvoicesPage() {
                         type="primary"
                         onClick={() => {
                             setEditingInvoice(null);
+                            setFormError(null);
+                            setInvoiceItemsError(null);
+                            setInvoiceItemDerivedErrors({});
                             form.resetFields();
                             form.setFieldsValue({
                                 status: "drafted",
@@ -349,6 +490,13 @@ export default function InvoicesPage() {
                                 <div className="flex gap-2">
                                     <Button
                                         type="link"
+                                        onClick={() => handleViewInvoice(invoice.id)}
+                                    >
+                                        View
+                                    </Button>
+
+                                    <Button
+                                        type="link"
                                         onClick={async () => {
                                             const response = await fetch(
                                                 `/api/invoices/${invoice.id}`
@@ -361,6 +509,9 @@ export default function InvoicesPage() {
 
                                             const detail = result.data;
 
+                                            setFormError(null);
+                                            setInvoiceItemsError(null);
+                                            setInvoiceItemDerivedErrors({});
                                             setEditingInvoice(detail);
 
                                             form.setFieldsValue({
@@ -392,10 +543,10 @@ export default function InvoicesPage() {
                                                         support_item_id:
                                                             item.support_item_id ?? undefined,
                                                         start_date: item.start_date
-                                                            ? dayjs(item.start_date)
+                                                            ? dayjs(item.start_date.slice(0, 10))
                                                             : undefined,
                                                         end_date: item.end_date
-                                                            ? dayjs(item.end_date)
+                                                            ? dayjs(item.end_date.slice(0, 10))
                                                             : undefined,
                                                         unit:
                                                             item.unit !== null
@@ -448,6 +599,9 @@ export default function InvoicesPage() {
                     forceRender
                     onCancel={() => {
                         form.resetFields();
+                        setFormError(null);
+                        setInvoiceItemsError(null);
+                        setInvoiceItemDerivedErrors({});
                         setEditingInvoice(null);
                         setModalOpen(false);
                     }}
@@ -464,6 +618,15 @@ export default function InvoicesPage() {
                         layout="vertical"
                         onFinish={handleSaveInvoice}
                     >
+                        {formError && (
+                            <Alert
+                                type="error"
+                                showIcon
+                                title={formError}
+                                className="mb-4"
+                            />
+                        )}
+
                         <Form.Item
                             label="Invoice Number"
                             name="invoice_number"
@@ -579,6 +742,15 @@ export default function InvoicesPage() {
                                             Add Line Item
                                         </Button>
                                     </div>
+
+                                    {invoiceItemsError && (
+                                        <Alert
+                                            type="error"
+                                            showIcon
+                                            title={invoiceItemsError}
+                                            className="mb-3"
+                                        />
+                                    )}
 
                                     {fields.map((field, index) => (
                                         <Card
@@ -722,6 +894,15 @@ export default function InvoicesPage() {
                                                 }}
                                             </Form.Item>
 
+                                            {invoiceItemDerivedErrors[field.name] && (
+                                                <Alert
+                                                    type="error"
+                                                    showIcon
+                                                    title={invoiceItemDerivedErrors[field.name]}
+                                                    className="mb-3"
+                                                />
+                                            )}
+
                                             <Space
                                                 orientation="vertical"
                                                 style={{ width: "100%" }}
@@ -820,6 +1001,171 @@ export default function InvoicesPage() {
                             )}
                         </Form.List>
                     </Form>
+                </Modal>
+            )}
+
+            {mounted && (
+                <Modal
+                    title="Invoice Details"
+                    open={viewModalOpen}
+                    onCancel={() => {
+                        setViewModalOpen(false);
+                        setViewingInvoice(null);
+                    }}
+                    footer={[
+                        <Button
+                            key="close"
+                            onClick={() => {
+                                setViewModalOpen(false);
+                                setViewingInvoice(null);
+                            }}
+                        >
+                            Close
+                        </Button>,
+                    ]}
+                    width={1000}
+                >
+                    {viewingInvoice && (
+                        <>
+                            <Descriptions
+                                bordered
+                                column={2}
+                                size="small"
+                                className="mb-6"
+                            >
+                                <Descriptions.Item label="Invoice Number">
+                                    {viewingInvoice.invoice_number ?? "-"}
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Status">
+                                    <Tag
+                                        color={
+                                            viewingInvoice.status === "completed"
+                                                ? "success"
+                                                : "default"
+                                        }
+                                    >
+                                        {viewingInvoice.status === "completed"
+                                            ? "Completed"
+                                            : "Draft"}
+                                    </Tag>
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Invoice Date">
+                                    {viewingInvoice.invoice_date
+                                        ? dayjs(viewingInvoice.invoice_date).format(
+                                            "YYYY-MM-DD"
+                                        )
+                                        : "-"}
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Participant">
+                                    {(() => {
+                                        const participant = participants.find(
+                                            (item) =>
+                                                item.id === viewingInvoice.client_id
+                                        );
+
+                                        return participant
+                                            ? `${participant.first_name} ${participant.last_name}`
+                                            : "-";
+                                    })()}
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Provider">
+                                    {providers.find(
+                                        (item) =>
+                                            item.id === viewingInvoice.provider_id
+                                    )?.name ?? "-"}
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Amount">
+                                    {viewingInvoice.amount !== null
+                                        ? `AUD ${Number(
+                                            viewingInvoice.amount
+                                        ).toFixed(2)}`
+                                        : "-"}
+                                </Descriptions.Item>
+
+                                <Descriptions.Item label="Expected Amount">
+                                    {viewingInvoice.expected_amount !== null
+                                        ? `AUD ${Number(
+                                            viewingInvoice.expected_amount
+                                        ).toFixed(2)}`
+                                        : "-"}
+                                </Descriptions.Item>
+                            </Descriptions>
+
+                            <Title level={4}>Invoice Items</Title>
+
+                            <Table
+                                rowKey="id"
+                                pagination={false}
+                                size="small"
+                                dataSource={viewingInvoice.items ?? []}
+                                columns={[
+                                    {
+                                        title: "Support Item",
+                                        dataIndex: "support_item_id",
+                                        render: (value: number | null) => {
+                                            const item = supportItems.find(
+                                                (supportItem) =>
+                                                    supportItem.id === value
+                                            );
+
+                                            return item
+                                                ? `${item.item_number} - ${item.item_name}`
+                                                : "-";
+                                        },
+                                    },
+                                    {
+                                        title: "Start Date",
+                                        dataIndex: "start_date",
+                                        render: (value: string | null) =>
+                                            value
+                                                ? value.slice(0, 10)
+                                                : "-",
+                                    },
+                                    {
+                                        title: "End Date",
+                                        dataIndex: "end_date",
+                                        render: (value: string | null) =>
+                                            value
+                                                ? value.slice(0, 10)
+                                                : "-",
+                                    },
+                                    {
+                                        title: "Quantity",
+                                        dataIndex: "unit",
+                                    },
+                                    {
+                                        title: "Input Rate",
+                                        dataIndex: "input_rate",
+                                        render: (value: string | null) =>
+                                            value !== null
+                                                ? `AUD ${Number(value).toFixed(2)}`
+                                                : "-",
+                                    },
+                                    {
+                                        title: "Max Rate",
+                                        dataIndex: "max_rate",
+                                        render: (value: string | null) =>
+                                            value !== null
+                                                ? `AUD ${Number(value).toFixed(2)}`
+                                                : "-",
+                                    },
+                                    {
+                                        title: "Amount",
+                                        dataIndex: "amount",
+                                        render: (value: string | null) =>
+                                            value !== null
+                                                ? `AUD ${Number(value).toFixed(2)}`
+                                                : "-",
+                                    },
+                                ]}
+                            />
+                        </>
+                    )}
                 </Modal>
             )}
 

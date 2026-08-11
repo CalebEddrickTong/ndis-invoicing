@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Card,
+    Descriptions,
     Form,
     Input,
     Modal,
@@ -44,6 +45,11 @@ export default function ProvidersPage() {
 
     const [editingProvider, setEditingProvider] =
         useState<Provider | null>(null);
+
+    const [viewingProvider, setViewingProvider] =
+        useState<Provider | null>(null);
+
+    const [viewModalOpen, setViewModalOpen] = useState(false);
 
     async function loadProviders() {
         setLoading(true);
@@ -114,6 +120,18 @@ export default function ProvidersPage() {
         }
     }
 
+    async function handleViewProvider(id: number) {
+        const response = await fetch(`/api/providers/${id}`);
+        const result = await response.json();
+
+        if (!response.ok) {
+            return;
+        }
+
+        setViewingProvider(result.data);
+        setViewModalOpen(true);
+    }
+
     async function handleDeleteProvider(id: number) {
         const response = await fetch(`/api/providers/${id}`, {
             method: "DELETE",
@@ -173,6 +191,13 @@ export default function ProvidersPage() {
                             key: "actions",
                             render: (_, provider: Provider) => (
                                 <div className="flex gap-2">
+                                    <Button
+                                        type="link"
+                                        onClick={() => handleViewProvider(provider.id)}
+                                    >
+                                        View
+                                    </Button>
+
                                     <Button
                                         type="link"
                                         onClick={async () => {
@@ -251,6 +276,10 @@ export default function ProvidersPage() {
                                     required: true,
                                     message: "ABN is required.",
                                 },
+                                {
+                                    pattern: /^\d{1,11}$/,
+                                    message: "ABN must contain digits only, maximum 11 digits.",
+                                },
                             ]}
                         >
                             <Input />
@@ -262,6 +291,7 @@ export default function ProvidersPage() {
                             rules={[
                                 {
                                     required: true,
+                                    whitespace: true,
                                     message: "Provider name is required.",
                                 },
                             ]}
@@ -289,6 +319,12 @@ export default function ProvidersPage() {
                         <Form.Item
                             label="Phone Number"
                             name="phone_number"
+                            rules={[
+                                {
+                                    pattern: /^\d{3,16}$/,
+                                    message: "Phone number must contain 3 to 16 digits.",
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -299,6 +335,7 @@ export default function ProvidersPage() {
                             rules={[
                                 {
                                     required: true,
+                                    whitespace: true,
                                     message: "Address is required.",
                                 },
                             ]}
@@ -309,12 +346,101 @@ export default function ProvidersPage() {
                         <Form.Item
                             label="Unit / Building"
                             name="unit_building"
+                            rules={[
+                                {
+                                    validator(_, value) {
+                                        if (
+                                            value === undefined ||
+                                            value === null ||
+                                            value === ""
+                                        ) {
+                                            return Promise.resolve();
+                                        }
+
+                                        if (
+                                            typeof value === "string" &&
+                                            value.trim().length > 0
+                                        ) {
+                                            return Promise.resolve();
+                                        }
+
+                                        return Promise.reject(
+                                            new Error(
+                                                "Unit / Building must not be empty if provided."
+                                            )
+                                        );
+                                    },
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
+
                     </Form>
                 </Modal>
             )}
+
+            {mounted && (
+                <Modal
+                    title="Provider Details"
+                    open={viewModalOpen}
+                    onCancel={() => {
+                        setViewModalOpen(false);
+                        setViewingProvider(null);
+                    }}
+                    footer={[
+                        <Button
+                            key="close"
+                            onClick={() => {
+                                setViewModalOpen(false);
+                                setViewingProvider(null);
+                            }}
+                        >
+                            Close
+                        </Button>,
+                    ]}
+                    width={700}
+                >
+                    {viewingProvider && (
+                        <Descriptions
+                            bordered
+                            column={2}
+                            size="small"
+                        >
+                            <Descriptions.Item label="ABN">
+                                {viewingProvider.abn}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Provider Name">
+                                {viewingProvider.name}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Email">
+                                {viewingProvider.email}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Phone Number">
+                                {viewingProvider.phone_number ?? "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item
+                                label="Unit / Building"
+                                span={2}
+                            >
+                                {viewingProvider.unit_building ?? "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item
+                                label="Address"
+                                span={2}
+                            >
+                                {viewingProvider.address}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    )}
+                </Modal>
+            )}
+
         </main>
     );
 }

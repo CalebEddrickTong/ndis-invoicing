@@ -5,6 +5,7 @@ import {
     Button,
     Card,
     DatePicker,
+    Descriptions,
     Form,
     Input,
     Modal,
@@ -25,6 +26,14 @@ type Participant = {
     last_name: string;
     email: string;
     pricing_region: string;
+};
+
+type ParticipantDetail = Participant & {
+    gender_id: number;
+    dob: string;
+    phone_number: string | null;
+    address: string;
+    unit_building: string | null;
 };
 
 type Gender = {
@@ -66,6 +75,11 @@ export default function ParticipantsPage() {
 
     const [editingParticipant, setEditingParticipant] =
         useState<Participant | null>(null);
+
+    const [viewingParticipant, setViewingParticipant] =
+        useState<ParticipantDetail | null>(null);
+
+    const [viewModalOpen, setViewModalOpen] = useState(false);
 
     async function loadParticipants() {
         setLoading(true);
@@ -149,6 +163,18 @@ export default function ParticipantsPage() {
         }
     }
 
+    async function handleViewParticipant(id: number) {
+        const response = await fetch(`/api/participants/${id}`);
+        const result = await response.json();
+
+        if (!response.ok) {
+            return;
+        }
+
+        setViewingParticipant(result.data);
+        setViewModalOpen(true);
+    }
+
     async function handleDeleteParticipant(id: number) {
         const response = await fetch(`/api/participants/${id}`, {
             method: "DELETE",
@@ -208,6 +234,13 @@ export default function ParticipantsPage() {
                             key: "actions",
                             render: (_, participant: Participant) => (
                                 <div className="flex gap-2">
+                                    <Button
+                                        type="link"
+                                        onClick={() => handleViewParticipant(participant.id)}
+                                    >
+                                        View
+                                    </Button>
+
                                     <Button
                                         type="link"
                                         onClick={async () => {
@@ -286,7 +319,13 @@ export default function ParticipantsPage() {
                         <Form.Item
                             label="First Name"
                             name="first_name"
-                            rules={[{ required: true, message: "First name is required." }]}
+                            rules={[
+                                {
+                                    required: true,
+                                    whitespace: true,
+                                    message: "First name is required.",
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -294,7 +333,13 @@ export default function ParticipantsPage() {
                         <Form.Item
                             label="Last Name"
                             name="last_name"
-                            rules={[{ required: true, message: "Last name is required." }]}
+                            rules={[
+                                {
+                                    required: true,
+                                    whitespace: true,
+                                    message: "Last name is required.",
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -327,7 +372,14 @@ export default function ParticipantsPage() {
                             label="NDIS Number"
                             name="ndis_number"
                             rules={[
-                                { required: true, message: "NDIS number is required." },
+                                {
+                                    required: true,
+                                    message: "NDIS number is required.",
+                                },
+                                {
+                                    pattern: /^\d{1,16}$/,
+                                    message: "NDIS number must contain digits only, maximum 16 digits.",
+                                },
                             ]}
                         >
                             <Input />
@@ -347,6 +399,12 @@ export default function ParticipantsPage() {
                         <Form.Item
                             label="Phone Number"
                             name="phone_number"
+                            rules={[
+                                {
+                                    pattern: /^\d{3,16}$/,
+                                    message: "Phone number must contain 3 to 16 digits.",
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -354,7 +412,13 @@ export default function ParticipantsPage() {
                         <Form.Item
                             label="Address"
                             name="address"
-                            rules={[{ required: true, message: "Address is required." }]}
+                            rules={[
+                                {
+                                    required: true,
+                                    whitespace: true,
+                                    message: "Address is required.",
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -362,6 +426,32 @@ export default function ParticipantsPage() {
                         <Form.Item
                             label="Unit / Building"
                             name="unit_building"
+                            rules={[
+                                {
+                                    validator(_, value) {
+                                        if (
+                                            value === undefined ||
+                                            value === null ||
+                                            value === ""
+                                        ) {
+                                            return Promise.resolve();
+                                        }
+
+                                        if (
+                                            typeof value === "string" &&
+                                            value.trim().length > 0
+                                        ) {
+                                            return Promise.resolve();
+                                        }
+
+                                        return Promise.reject(
+                                            new Error(
+                                                "Unit / Building must not be empty if provided."
+                                            )
+                                        );
+                                    },
+                                },
+                            ]}
                         >
                             <Input />
                         </Form.Item>
@@ -386,6 +476,97 @@ export default function ParticipantsPage() {
                     </Form>
                 </Modal>
             )}
+
+            {mounted && (
+                <Modal
+                    title="Participant Details"
+                    open={viewModalOpen}
+                    onCancel={() => {
+                        setViewModalOpen(false);
+                        setViewingParticipant(null);
+                    }}
+                    footer={[
+                        <Button
+                            key="close"
+                            onClick={() => {
+                                setViewModalOpen(false);
+                                setViewingParticipant(null);
+                            }}
+                        >
+                            Close
+                        </Button>,
+                    ]}
+                    width={700}
+                >
+                    {viewingParticipant && (
+                        <Descriptions
+                            bordered
+                            column={2}
+                            size="small"
+                        >
+                            <Descriptions.Item label="NDIS Number">
+                                {viewingParticipant.ndis_number}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Name">
+                                {viewingParticipant.first_name}{" "}
+                                {viewingParticipant.last_name}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Gender">
+                                {genders.find(
+                                    (gender) =>
+                                        gender.id === viewingParticipant.gender_id
+                                )?.label ?? "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Date of Birth">
+                                {viewingParticipant.dob
+                                    ? viewingParticipant.dob.slice(0, 10)
+                                    : "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Email">
+                                {viewingParticipant.email}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Phone Number">
+                                {viewingParticipant.phone_number ?? "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Pricing Region">
+                                {(() => {
+                                    const region = pricingRegions.find(
+                                        (item) =>
+                                            item.code ===
+                                            viewingParticipant.pricing_region
+                                    );
+
+                                    if (!region) {
+                                        return viewingParticipant.pricing_region;
+                                    }
+
+                                    return region.label === region.full_label
+                                        ? region.label
+                                        : `${region.label} - ${region.full_label}`;
+                                })()}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Unit / Building">
+                                {viewingParticipant.unit_building ?? "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item
+                                label="Address"
+                                span={2}
+                            >
+                                {viewingParticipant.address}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    )}
+                </Modal>
+            )}
+
         </main>
     );
 }

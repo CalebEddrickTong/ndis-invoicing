@@ -5,6 +5,7 @@ import {
     Button,
     Card,
     DatePicker,
+    Descriptions,
     Form,
     Input,
     Modal,
@@ -47,6 +48,11 @@ export default function RateSetsPage() {
 
     const [editingRateSet, setEditingRateSet] =
         useState<RateSet | null>(null);
+
+    const [viewingRateSet, setViewingRateSet] =
+        useState<RateSet | null>(null);
+
+    const [viewModalOpen, setViewModalOpen] = useState(false);
 
     const [importingRateSetId, setImportingRateSetId] =
         useState<number | null>(null);
@@ -117,6 +123,18 @@ export default function RateSetsPage() {
         } finally {
             setSaving(false);
         }
+    }
+
+    async function handleViewRateSet(id: number) {
+        const response = await fetch(`/api/rate-sets/${id}`);
+        const result = await response.json();
+
+        if (!response.ok) {
+            return;
+        }
+
+        setViewingRateSet(result.data);
+        setViewModalOpen(true);
     }
 
     async function handleDeleteRateSet(id: number) {
@@ -217,6 +235,13 @@ export default function RateSetsPage() {
                             key: "actions",
                             render: (_, rateSet: RateSet) => (
                                 <div className="flex gap-2">
+                                    <Button
+                                        type="link"
+                                        onClick={() => handleViewRateSet(rateSet.id)}
+                                    >
+                                        View
+                                    </Button>
+
                                     <Button
                                         type="link"
                                         onClick={async () => {
@@ -372,6 +397,64 @@ export default function RateSetsPage() {
                     </Form>
                 </Modal>
             )}
+
+            {mounted && (
+                <Modal
+                    title="Rate Set Details"
+                    open={viewModalOpen}
+                    onCancel={() => {
+                        setViewModalOpen(false);
+                        setViewingRateSet(null);
+                    }}
+                    footer={[
+                        <Button
+                            key="close"
+                            onClick={() => {
+                                setViewModalOpen(false);
+                                setViewingRateSet(null);
+                            }}
+                        >
+                            Close
+                        </Button>,
+                    ]}
+                    width={700}
+                >
+                    {viewingRateSet && (
+                        <Descriptions
+                            bordered
+                            column={2}
+                            size="small"
+                        >
+                            <Descriptions.Item
+                                label="Name"
+                                span={2}
+                            >
+                                {viewingRateSet.name}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="Start Date">
+                                {viewingRateSet.start_date
+                                    ? viewingRateSet.start_date.slice(0, 10)
+                                    : "-"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item label="End Date">
+                                {viewingRateSet.end_date
+                                    ? viewingRateSet.end_date.slice(0, 10)
+                                    : "Open-ended"}
+                            </Descriptions.Item>
+
+                            <Descriptions.Item
+                                label="Description"
+                                span={2}
+                            >
+                                {viewingRateSet.description ?? "-"}
+                            </Descriptions.Item>
+                        </Descriptions>
+                    )}
+                </Modal>
+            )}
+
         </main>
     );
 }
