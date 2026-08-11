@@ -540,7 +540,17 @@ The PostgreSQL and MinIO containers should be running.
 
 ---
 
-## 5. Start the Application
+## 5. Run Database Migrations
+
+After PostgreSQL is running, apply the database migrations:
+
+```bash
+npm run db:migrate
+```
+
+This creates and updates the required database schema and applies the project seed data and reference data through the migration system.
+
+## 6. Start the Application
 
 Run:
 

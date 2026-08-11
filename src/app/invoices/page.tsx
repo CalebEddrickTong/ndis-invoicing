@@ -972,11 +972,11 @@ export default function InvoicesPage() {
                                                 >
                                                     <InputNumber
                                                         min={0}
-                                                        step={1}
-                                                        precision={0}
+                                                        step={0.01}
+                                                        precision={4}
                                                         controls
                                                         style={{ width: "100%" }}
-                                                        placeholder="0"
+                                                        placeholder="0.0000"
                                                     />
                                                 </Form.Item>
 

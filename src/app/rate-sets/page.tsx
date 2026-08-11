@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+    Alert,
     Button,
     Card,
     DatePicker,
@@ -44,6 +45,8 @@ export default function RateSetsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
+
     const [mounted, setMounted] = useState(false);
 
     const [editingRateSet, setEditingRateSet] =
@@ -78,6 +81,7 @@ export default function RateSetsPage() {
     }, []);
 
     async function handleCreate(values: RateSetFormValues) {
+        setFormError(null);
         setSaving(true);
 
         try {
@@ -112,6 +116,10 @@ export default function RateSetsPage() {
                         }))
                     );
                 }
+
+                setFormError(
+                    result.message ?? "Unable to save rate set."
+                );
 
                 return;
             }
@@ -196,6 +204,7 @@ export default function RateSetsPage() {
                         type="primary"
                         onClick={() => {
                             setEditingRateSet(null);
+                            setFormError(null);
                             form.resetFields();
                             setModalOpen(true);
                         }}
@@ -315,6 +324,7 @@ export default function RateSetsPage() {
                     forceRender
                     onCancel={() => {
                         form.resetFields();
+                        setFormError(null);
                         setEditingRateSet(null);
                         setModalOpen(false);
                     }}
@@ -327,6 +337,15 @@ export default function RateSetsPage() {
                         layout="vertical"
                         onFinish={handleCreate}
                     >
+                        {formError && (
+                            <Alert
+                                type="error"
+                                showIcon
+                                title={formError}
+                                className="mb-4"
+                            />
+                        )}
+
                         <Form.Item
                             label="Name"
                             name="name"
