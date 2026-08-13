@@ -408,8 +408,38 @@ export function extractCataloguePrices(
             }
         }
     }
+    const deduplicatedPrices = new Map<
+        string,
+        (typeof prices)[number]
+    >();
 
-    return prices;
+    for (const price of prices) {
+        const key = [
+            price.categoryNumber,
+            price.itemNumber,
+            price.typeCode ?? "NULL",
+            price.pricingRegionCode,
+            price.startDate,
+            price.endDate ?? "NULL",
+        ].join("|");
+
+        const existing = deduplicatedPrices.get(key);
+
+        if (
+            existing &&
+            existing.unitPrice !== price.unitPrice
+        ) {
+            throw new Error(
+                `Conflicting price data for ${key}`
+            );
+        }
+
+        if (!existing) {
+            deduplicatedPrices.set(key, price);
+        }
+    }
+
+    return [...deduplicatedPrices.values()];
 }
 
 export function extractCatalogueSupportItemTypes(

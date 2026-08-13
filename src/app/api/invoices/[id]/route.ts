@@ -101,8 +101,13 @@ function calculateItemAmount(
     unit: BigNumber,
     inputRate: BigNumber
 ): BigNumber {
+    const roundedInputRate = inputRate.decimalPlaces(
+        2,
+        BigNumber.ROUND_HALF_UP
+    );
+
     return unit
-        .multipliedBy(inputRate)
+        .multipliedBy(roundedInputRate)
         .decimalPlaces(2, BigNumber.ROUND_HALF_UP);
 }
 

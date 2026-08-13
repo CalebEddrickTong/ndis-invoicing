@@ -706,6 +706,20 @@ This increases backend complexity slightly but prevents manipulated frontend req
 
 ---
 
+## Rate Set Overlap Constraint
+
+The supplied database schema includes a `rate_set_no_overlap_excl` exclusion constraint that prevents two non-deleted rate sets from having overlapping date ranges.
+
+The invoice requirements also specify defensive validation for situations where two or more rate sets match an invoice item's service date range.
+
+The supplied database constraint was retained because it provides stronger data-integrity protection and is part of the provided schema. As a result, multiple overlapping non-deleted rate sets cannot normally be created through the application.
+
+The invoice API still contains defensive validation for zero, one, or multiple matching rate sets. The multiple-match branch therefore remains in place in case the database constraint is changed, disabled, or historical data is introduced through another process.
+
+This approach preserves the supplied database design while still implementing the invoice-side validation required by the assessment.
+
+---
+
 ## Full Replacement of Invoice Items on Edit
 
 When an invoice is edited, the submitted invoice-item collection represents the current invoice state.

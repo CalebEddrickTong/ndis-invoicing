@@ -278,6 +278,26 @@ export async function PUT(
             data: participant,
         });
     } catch (error) {
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === "23505"
+        ) {
+            return Response.json(
+                {
+                    message: "Validation failed.",
+                    errors: {
+                        ndis_number:
+                            "A participant with this NDIS number already exists.",
+                    },
+                },
+                {
+                    status: 409,
+                }
+            );
+        }
+
         console.error("Update participant failed:", error);
 
         return Response.json(
