@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
     Alert,
     Button,
@@ -111,6 +111,10 @@ type SupportItemLookup = {
 };
 
 export default function InvoicesPage() {
+    const emptySubscribe = () => () => { };
+    const getClientSnapshot = () => true;
+    const getServerSnapshot = () => false;
+
     const [form] = Form.useForm<InvoiceFormValues>();
 
     const [formError, setFormError] = useState<string | null>(null);
@@ -129,7 +133,12 @@ export default function InvoicesPage() {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [mounted, setMounted] = useState(false);
+
+    const mounted = useSyncExternalStore(
+        emptySubscribe,
+        getClientSnapshot,
+        getServerSnapshot
+    );
 
     const [rateSets, setRateSets] = useState<RateSetLookup[]>([]);
     const [categories, setCategories] = useState<CategoryLookup[]>([]);
@@ -159,7 +168,6 @@ export default function InvoicesPage() {
     }
 
     useEffect(() => {
-        setMounted(true);
 
         async function loadPageData() {
             const [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
     Alert,
     Button,
@@ -39,6 +39,10 @@ type RateSetFormValues = {
 };
 
 export default function RateSetsPage() {
+    const emptySubscribe = () => () => { };
+    const getClientSnapshot = () => true;
+    const getServerSnapshot = () => false;
+
     const [form] = Form.useForm<RateSetFormValues>();
 
     const [rateSets, setRateSets] = useState<RateSet[]>([]);
@@ -47,7 +51,11 @@ export default function RateSetsPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
 
-    const [mounted, setMounted] = useState(false);
+    const mounted = useSyncExternalStore(
+        emptySubscribe,
+        getClientSnapshot,
+        getServerSnapshot
+    );
 
     const [editingRateSet, setEditingRateSet] =
         useState<RateSet | null>(null);
@@ -61,7 +69,6 @@ export default function RateSetsPage() {
         useState<number | null>(null);
 
     async function loadRateSets() {
-        setLoading(true);
 
         try {
             const response = await fetch("/api/rate-sets");
@@ -76,7 +83,6 @@ export default function RateSetsPage() {
     }
 
     useEffect(() => {
-        setMounted(true);
         loadRateSets();
     }, []);
 

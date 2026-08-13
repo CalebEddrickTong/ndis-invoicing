@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
     Button,
     Card,
@@ -62,6 +62,10 @@ type ParticipantFormValues = {
 };
 
 export default function ParticipantsPage() {
+    const emptySubscribe = () => () => { };
+    const getClientSnapshot = () => true;
+    const getServerSnapshot = () => false;
+
     const [form] = Form.useForm<ParticipantFormValues>();
 
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -71,7 +75,12 @@ export default function ParticipantsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
+
+    const mounted = useSyncExternalStore(
+        emptySubscribe,
+        getClientSnapshot,
+        getServerSnapshot
+    );
 
     const [editingParticipant, setEditingParticipant] =
         useState<Participant | null>(null);
@@ -82,7 +91,6 @@ export default function ParticipantsPage() {
     const [viewModalOpen, setViewModalOpen] = useState(false);
 
     async function loadParticipants() {
-        setLoading(true);
 
         try {
             const response = await fetch("/api/participants");
@@ -96,20 +104,20 @@ export default function ParticipantsPage() {
         }
     }
 
-    async function loadLookups() {
-        const response = await fetch("/api/participants/lookups");
-        const result = await response.json();
-
-        if (response.ok) {
-            setGenders(result.data?.genders ?? []);
-            setPricingRegions(result.data?.pricing_regions ?? []);
-        }
-    }
-
     useEffect(() => {
-        setMounted(true);
         loadParticipants();
-        loadLookups();
+
+        fetch("/api/participants/lookups")
+            .then(async (response) => ({
+                response,
+                result: await response.json(),
+            }))
+            .then(({ response, result }) => {
+                if (response.ok) {
+                    setGenders(result.data?.genders ?? []);
+                    setPricingRegions(result.data?.pricing_regions ?? []);
+                }
+            });
     }, []);
 
     async function handleCreate(values: ParticipantFormValues) {

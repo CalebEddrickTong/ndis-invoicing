@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
     Button,
     Card,
@@ -35,14 +35,22 @@ type ProviderFormValues = {
 };
 
 export default function ProvidersPage() {
+    const emptySubscribe = () => () => { };
+    const getClientSnapshot = () => true;
+    const getServerSnapshot = () => false;
+
     const [form] = Form.useForm<ProviderFormValues>();
 
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
 
+    const mounted = useSyncExternalStore(
+        emptySubscribe,
+        getClientSnapshot,
+        getServerSnapshot
+    );
     const [editingProvider, setEditingProvider] =
         useState<Provider | null>(null);
 
@@ -52,7 +60,6 @@ export default function ProvidersPage() {
     const [viewModalOpen, setViewModalOpen] = useState(false);
 
     async function loadProviders() {
-        setLoading(true);
 
         try {
             const response = await fetch("/api/providers");
@@ -67,7 +74,6 @@ export default function ProvidersPage() {
     }
 
     useEffect(() => {
-        setMounted(true);
         loadProviders();
     }, []);
 
